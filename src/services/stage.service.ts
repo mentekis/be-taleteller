@@ -1,6 +1,6 @@
 import { replicate } from "../utils/replicate";
 import { openai } from "../utils/openai";
-import { Stage, StageArguments } from "../types/stage";
+import { IStage, IStageArguments } from "../types/stage";
 
 /**
  * Create a 16:9 illustration image using replicate:flux-schnell
@@ -27,7 +27,7 @@ async function generateImage(prompt: string) {
  * Create a stage using OpenAI. Inside the stage properties there is
  * an illustration created by generateImage()
  */
-export async function generateStage(data: StageArguments): Promise<Stage> {
+export async function generateStage(data: IStageArguments): Promise<IStage> {
    const { storyId, premise, currentStageNumber, currentStorySummary, userChoice, maxStage } = data;
 
    const response = await openai.chat.completions.create({

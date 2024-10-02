@@ -1,4 +1,4 @@
-export interface StageArguments {
+export interface IStageArguments {
    storyId: string;
    premise: string;
    currentStageNumber: number;
@@ -7,7 +7,7 @@ export interface StageArguments {
    maxStage: number;
 }
 
-export interface Stage {
+export interface IStage {
    storyId: string;
    stageNumber: number;
    stageTitle: string;
