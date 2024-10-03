@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { generateStage } from "./services/stage.service";
+import { getRandomPremise, validatePremise } from "./services/story.service";
 
 import { connectDb } from "./utils/connectDb";
 
@@ -13,6 +14,17 @@ app.use(express.json());
 app.post("/generatestage", async (req, res) => {
    const stage = await generateStage(req.body);
    res.json(stage);
+});
+
+app.get("/randompremise", async (_, res) => {
+   const premise = await getRandomPremise();
+   res.json(premise);
+});
+
+app.post("/validatepremise", async (req, res) => {
+   const userPremise = req.body.premise;
+   const result = await validatePremise(userPremise);
+   res.json(result);
 });
 
 connectDb();
