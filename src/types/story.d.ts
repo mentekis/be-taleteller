@@ -4,4 +4,5 @@ export interface IStory {
    premise: string;
    thumbnail: string;
    isFinish: boolean;
+   maxStage: number;
 }

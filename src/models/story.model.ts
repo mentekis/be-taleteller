@@ -6,6 +6,7 @@ const storySchema = new Schema({
    premise: String,
    thumbnail: String,
    isFinish: Boolean,
+   maxStage: Number,
 });
 
 export const Story = model("Story", storySchema);

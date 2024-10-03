@@ -98,12 +98,16 @@ export async function validatePremise(premise: string) {
 
 // create a new story only by premise, all other data is marked temporary or ongoing
 export function createNewStory(premise: string) {
+   const MIN_STAGE_NUMBER = 4;
+   const MAX_STAGE_NUMBER = 7;
+
    const storyData = {
       title: "Ongoing Story ...",
       description: premise + " [temporary]",
       thumbnail: "",
       premise,
       isFinish: false,
+      maxStage: MIN_STAGE_NUMBER + Math.floor(Math.random() * (MAX_STAGE_NUMBER - MIN_STAGE_NUMBER)),
    };
 
    const newStory = storyRepository.create(storyData);
