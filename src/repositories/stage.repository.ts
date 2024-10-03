@@ -8,13 +8,13 @@ export async function create(data: Omit<IStage, "optionA" | "optionB">) {
 }
 
 // get stages based on filter
-export async function get(filter: { storyId?: string; _id?: string; stageNumber?: number }) {
+export async function get(filter: Partial<IStage>) {
    return await Stage.find(filter);
 }
 
 // update stage place-url
-export async function update(data: { _id: string; place: string }) {
-   const updatedStage = await Stage.findOneAndUpdate({ _id: data._id }, { place: data.place }, { new: true });
+export async function update(id: string, data: Partial<IStage>) {
+   const updatedStage = await Stage.findOneAndUpdate({ _id: id }, { data }, { new: true });
    return updatedStage;
 }
 

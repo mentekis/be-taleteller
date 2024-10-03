@@ -108,7 +108,6 @@ export async function generateStage(data: IStageArguments): Promise<IStage> {
    stage.bgm = getBgmUrl(stage.bgm) as string;
    // stage.place = await generateImage(stage.place);
 
-    
    // const { optionA, optionB, ...stageData } = stage;
    // Stage.create(stageData);
 
