@@ -2,7 +2,7 @@ export interface IStageArguments {
    storyId: string;
    premise: string;
    currentStageNumber: number;
-   currentStorySummary: string;
+   currentStoryContext: string;
    userChoice: string;
    maxStage: number;
 }
@@ -16,6 +16,6 @@ export interface IStage {
    optionB: string;
    place: string;
    isEnd: boolean;
-   storySummary: string;
+   storyContext: string;
    bgm: string;
 }

@@ -1,9 +1,19 @@
+import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import express from "express";
+
+import { generateStage } from "./services/stage.service";
+
 import { connectDb } from "./utils/connectDb";
 
 const app = express();
+
+app.use(express.json());
+
+app.post("/generatestage", async (req, res) => {
+   const stage = await generateStage(req.body);
+   res.json(stage);
+});
 
 connectDb();
 

@@ -1,34 +1,40 @@
-import { replicate } from "../utils/replicate";
+// import { replicate } from "../utils/replicate";
 import { openai } from "../utils/openai";
 import { IStage, IStageArguments } from "../types/stage";
+// import { Stage } from "../models/stage.model";
+import { getBgmTags, getBgmUrl } from "../utils/bgm";
 
-/**
- * Create a 16:9 illustration image using replicate:flux-schnell
- * https://replicate.com/black-forest-labs/flux-schnell
- */
-async function generateImage(prompt: string) {
-   const model = "black-forest-labs/flux-schnell";
+// generate image using replicate api & flux-schnell model
+// async function generateImage(prompt: string) {
+//    const model = "black-forest-labs/flux-schnell";
 
-   const input = {
-      prompt: `Child storybook illustration of ${prompt}`,
-      go_fast: true,
-      num_outputs: 1,
-      aspect_ratio: "16:9",
-      output_format: "webp",
-      output_quality: 80,
-   };
+//    const input = {
+//       prompt: `Child storybook illustration of ${prompt}`,
+//       go_fast: true,
+//       num_outputs: 1,
+//       aspect_ratio: "16:9",
+//       output_format: "webp",
+//       output_quality: 80,
+//    };
 
-   const response = (await replicate.run(model, { input })) as string[];
+//    const response = (await replicate.run(model, { input })) as string[];
 
-   return response[0];
-}
+//    return response[0];
+// }
 
-/**
- * Create a stage using OpenAI. Inside the stage properties there is
- * an illustration created by generateImage()
- */
+// generate stage using openai and save it to db
 export async function generateStage(data: IStageArguments): Promise<IStage> {
-   const { storyId, premise, currentStageNumber, currentStorySummary, userChoice, maxStage } = data;
+   const { storyId, premise, currentStageNumber, currentStoryContext, userChoice, maxStage } = data;
+
+   let userPrompt = `Current stage number = ${currentStageNumber};\nPrevious story context = ${currentStoryContext};\nUser choice = ${userChoice};\n`;
+
+   if (currentStageNumber == maxStage - 2) {
+      userPrompt = userPrompt + " CRITICAL: STAGE STORY AND OPTIONS MUST LEAD TO STORY CONCLUSION";
+   }
+
+   if (currentStageNumber == maxStage - 1) {
+      userPrompt = userPrompt + "CRITICAL: CONCLUDE THE STORY. DON'T GIVE OPTIONS ANYMORE. TELL THE MORAL OF THE STORY";
+   }
 
    const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -37,28 +43,19 @@ export async function generateStage(data: IStageArguments): Promise<IStage> {
             role: "system",
             content: [
                {
-                  text: `Create a kids story about ${premise}. Give character name. Each response is a stage. A stage consists of 3 or less events. .  A stage always end with two options of main character actions. Each option describes the action that main character will take. Each option is opposite of the other. Each option is an active action. The action then directs what happen on the next stage. Repeat the action chosen on the next stage story. \n\nIMPORTANT:\nDescribe the character and story settings in stageNumber = 1. Introduce an engaging conflict or opposing characters in stageNumber = 2. Give some mindblowing plot in stageNumber = 3. Conclude the story in stageNumber=6. The conclucion should solve all the conflicts of the story.\n\nIMPORTANT:\nDescribe the place where the stage take place in 1 sentence. Describe like you are a kids storybook illustrator. include the style and color in the description. Don't repeat the place description on the next stage. Always describe in a whimsical and vivid art style. \n\nCRITICAL: Do not include any name in the place description. Do not include any character name in the place description. Do not include any living creature in the place description. Keep showing the description when the story has concluded.\n\nCRITICAL: CONCLUDE THE STORY AT STAGE NUMBER ${maxStage}. \n\nCRITICAL: The options on stage number ${
-                     maxStage - 1
-                  } must lead to story conclusion.`,
                   type: "text",
+                  text: `You are a storyteller for kids. Each response is a stage of a kids story. A stage consist of 5 senteces or less. A stage end with two options. Each option is an action choice. The option choosen by user directs what happens in the next stage. If given previous story, continue to the next stage. 
+                  
+                  Tell a kids story about ${premise}`,
                },
             ],
          },
          {
             role: "user",
-            content: [
-               {
-                  type: "text",
-                  text: `current stage number: ${currentStageNumber}\nstory summary : ${currentStorySummary}\nuser choice : ${userChoice}\ncontinue to stage number : ${
-                     currentStageNumber + 1
-                  }\nend the story at stage number : ${maxStage}. The options on stage number ${
-                     maxStage - 1
-                  } must lead to story conclusion`,
-               },
-            ],
+            content: userPrompt,
          },
       ],
-      temperature: 1.1,
+      temperature: 1.2,
       max_tokens: 2048,
       top_p: 1,
       frequency_penalty: 0,
@@ -66,68 +63,54 @@ export async function generateStage(data: IStageArguments): Promise<IStage> {
       response_format: {
          type: "json_schema",
          json_schema: {
-            name: "stage_story",
+            name: "story_response",
             schema: {
                type: "object",
-               required: [
-                  "stageNumber",
-                  "stageTitle",
-                  "stageStory",
-                  "optionA",
-                  "optionB",
-                  "place",
-                  "isEnd",
-                  "storySummary",
-                  "bgm",
-               ],
+               required: ["stageNumber", "stageStory", "optionA", "optionB", "place", "bgm"],
                properties: {
-                  isEnd: {
-                     type: "boolean",
-                     description: "True if story has been concluded. False if story is still on going",
+                  bgm: {
+                     type: "string",
+                     description: `Choose the most suitable ambience from this list: ${getBgmTags()}`,
                   },
                   place: {
                      type: "string",
                      description:
-                        "Description of a place where stage taking place. The description must be whimsical, colorful and full of detail",
+                        "A detailed, colorful and whimsical description of the place where the story is set at this stage. CRITICAL: follow this format example: A whimsical, colorful cottage nestled in a lush, enchanted forest. Sunlight filters through the canopy, illuminating the cottage's vibrant exterior and casting playful shadows on the surrounding foliage",
                   },
                   optionA: {
                      type: "string",
-                     description: "Option of main character action.  Null if story have been concluded",
+                     description: "The first option available to the user.",
                   },
                   optionB: {
                      type: "string",
-                     description: "Option of main character action. Null if story have been concluded",
+                     description: "The second option available to the user.",
                   },
                   stageStory: {
                      type: "string",
-                     description: "Naration of events taking place on the stage",
-                  },
-                  stageTitle: {
-                     type: "string",
+                     description: "The narrative or text of the stage in the story.",
                   },
                   stageNumber: {
                      type: "number",
-                     description: "increment of current stage number",
+                     description: "The current stage number in the story.",
                   },
-                  storySummary: {
-                     type: "string",
-                     description: "The story SUMMARY. Accumulation of summary of previous stage.",
-                  },
-                  bgm: {
-                     type: "string",
-                     description:
-                        "choose the url of the most suitable background music/ambience sound based on the tags for the stage from this list [{tags:'outer space', url:'http://outerspace.bgm'},{tags:'jungle', url:'http://jungle.bgm'},{tags:'city', url:'http://city.bgm'}, {tags:'sea', url:'http://sea.bgm'}]",
-                  },
-                  additionalProperties: false,
                },
-               strict: true,
+               additionalProperties: false,
             },
+            strict: true,
          },
       },
    });
 
-   const stage = JSON.parse(response.choices[0].message?.content as string);
-   stage.place = await generateImage(stage.place);
-   stage.storyId = storyId
+   const stage = JSON.parse(response.choices[0].message?.content as string) as IStage;
+   stage.storyId = storyId;
+   stage.storyContext = currentStoryContext + stage.stageStory;
+   stage.isEnd = stage.stageNumber == maxStage;
+   stage.bgm = getBgmUrl(stage.bgm) as string;
+   // stage.place = await generateImage(stage.place);
+
+    
+   // const { optionA, optionB, ...stageData } = stage;
+   // Stage.create(stageData);
+
    return stage;
 }

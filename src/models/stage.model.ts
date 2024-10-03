@@ -5,9 +5,10 @@ const stageSchema = new Schema({
    stageNumber: Number,
    stageTitle: String,
    stageStory: String,
-   storySummary: String,
+   storyContext: String,
    place: String,
    bgm: String,
+   isEnd: Boolean
 });
 
 export const Stage = model("Stage", stageSchema);
