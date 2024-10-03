@@ -10,7 +10,6 @@ export interface IStageArguments {
 export interface IStage {
    storyId: string;
    stageNumber: number;
-   stageTitle: string;
    stageStory: string;
    optionA: string;
    optionB: string;
