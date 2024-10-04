@@ -6,10 +6,15 @@ import { generateStage } from "./services/stage.service";
 import { getRandomPremise, validatePremise } from "./services/story.service";
 
 import { connectDb } from "./utils/connectDb";
+import { storyRouter } from "./routes/story.route";
 
 const app = express();
 
 app.use(express.json());
+
+app.use(storyRouter);
+
+// testing purpose only--------
 
 app.post("/generatestage", async (req, res) => {
    const stage = await generateStage(req.body);
@@ -26,6 +31,8 @@ app.post("/validatepremise", async (req, res) => {
    const result = await validatePremise(userPremise);
    res.json(result);
 });
+
+// --------------------------
 
 connectDb();
 

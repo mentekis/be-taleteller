@@ -8,8 +8,10 @@ export function create(data: IStory) {
 }
 
 // get list of stories based on filter
-export function get(filter: Partial<IStory>) {
-   return Story.find(filter);
+export async function get(filter: Partial<IStory>, start: number, limit: number, orderBy: string) {
+   const order = orderBy === "dsc" ? -1 : 1;
+   const stories = await Story.find(filter).skip(start).limit(limit).sort({ createdAt: order });
+   return stories;
 }
 
 // get a single story by storyId
@@ -23,6 +25,12 @@ export function deleteById(id: string) {
 }
 
 // update a story
-export function update(id: string, data: Partial<IStory>) {
-   return Story.findOneAndUpdate({ _id: id }, { data }, { new: true });
+export async function update(id: string, data: Partial<IStory>) {
+   const updatedStory = await Story.findOneAndUpdate({ _id: id }, data, { new: true });
+   return updatedStory;
+}
+
+// count number of stories
+export async function count(filter: Partial<IStory>) {
+   return await Story.countDocuments(filter);
 }

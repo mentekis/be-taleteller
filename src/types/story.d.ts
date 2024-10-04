@@ -1,5 +1,7 @@
 export interface IStory {
-   title: string;
+   _id?: string;
+   userId: string;
+   title: string | RegExp;
    description: string;
    premise: string;
    thumbnail: string;
