@@ -10,7 +10,7 @@ export function create(data: IStory) {
 // get list of stories based on filter
 export async function get(filter: Partial<IStory>, start: number, limit: number, orderBy: string) {
    const order = orderBy === "dsc" ? -1 : 1;
-   const stories = await Story.find(filter).skip(start).limit(limit).sort({ createdAt: order });
+   const stories = await Story.find(filter).skip(start).limit(limit).sort({ updatedAt: order });
    return stories;
 }
 
@@ -26,6 +26,7 @@ export function deleteById(id: string) {
 
 // update a story
 export async function update(id: string, data: Partial<IStory>) {
+   data.updatedAt = Date.now() as unknown as Date;
    const updatedStory = await Story.findOneAndUpdate({ _id: id }, data, { new: true });
    return updatedStory;
 }

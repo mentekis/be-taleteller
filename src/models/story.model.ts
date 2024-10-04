@@ -9,6 +9,7 @@ const storySchema = new Schema({
    isFinish: Boolean,
    maxStage: Number,
    createdAt: { type: Date, default: Date.now },
+   updatedAt: { type: Date, default: Date.now },
 });
 
 storySchema.virtual("likes", {

@@ -24,7 +24,6 @@ storyRouter.patch("/api/v1/stories/:storyId", storyController.handleUpdateStory)
 // delete story
 storyRouter.delete("/api/v1/stories/:storyId", storyController.handleDeleteStory);
 
-// get random premise
 
 // validate user premise
 storyRouter.post("/api/v1/stories/premise", storyController.handleValidatePremise);

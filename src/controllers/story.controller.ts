@@ -3,15 +3,21 @@ import * as storyService from "../services/story.service";
 import { IStory } from "../types/story";
 
 export async function handleCreateStory(req: Request, res: Response) {
-   const { userId, premise } = req.body;
-   const newStory = await storyService.createNewStory({ userId, premise });
-   res.status(201).json({
-      message: "New story created",
-      data: {
-         storyId: newStory._id,
-         maxStage: newStory.maxStage,
-      },
-   });
+   try {
+      const { userId, premise } = req.body;
+      const newStory = await storyService.createNewStory({ userId, premise });
+      res.status(201).json({
+         message: "new story created",
+         data: newStory,
+      });
+   } catch (error) {
+      if (error instanceof Error) {
+         res.status(400).json({
+            message: "story creation failed",
+            data: { ...error },
+         });
+      }
+   }
 }
 
 export async function handleGetStories(req: Request, res: Response) {
@@ -80,7 +86,7 @@ export async function handleGetLikedStories(req: Request, res: Response) {
       });
    } catch (error) {
       if (error instanceof Error) {
-         res.status(404).json({
+         res.status(400).json({
             message: "get liked stories failed",
             data: { ...error },
          });
@@ -90,8 +96,16 @@ export async function handleGetLikedStories(req: Request, res: Response) {
 export async function handleUpdateStory(req: Request, res: Response) {
    try {
       const { storyId } = req.params;
-      const updatedStory = await storyService.update(storyId, req.body);
-      res.status(200).json({
+      const { title, description } = req.body;
+
+      const updatedData: { title?: string; description?: string } = {};
+
+      if (title) updatedData["title"] = title;
+      if (description) updatedData["description"] = description;
+
+      const updatedStory = await storyService.update(storyId, updatedData);
+
+      res.status(201).json({
          message: "story updated",
          data: updatedStory,
       });
@@ -140,9 +154,9 @@ export async function handleGetRandomPremise(req: Request, res: Response) {
 
 export async function handleValidatePremise(req: Request, res: Response) {
    try {
-      const validationResult = await storyService.validatePremise(req.body.premise);
+      const { isValid, suggestedPremise } = await storyService.validatePremise(req.body.premise);
 
-      res.status(200).json({ validationResult });
+      res.status(200).json({ isValid, suggestedPremise });
    } catch (error) {
       if (error instanceof Error) {
          res.status(400).json({

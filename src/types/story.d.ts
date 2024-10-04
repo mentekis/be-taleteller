@@ -7,4 +7,6 @@ export interface IStory {
    thumbnail: string;
    isFinish: boolean;
    maxStage: number;
+   createdAt?: Date;
+   updatedAt?: Date;
 }

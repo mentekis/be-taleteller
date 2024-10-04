@@ -1,0 +1,37 @@
+### create a new story
+POST http://localhost:3000/api/v1/stories
+Content-Type: application/json
+
+{
+    "userId": "000",
+    "premise": "story premise refined by AI"
+}
+
+### get list stories
+GET http://localhost:3000/api/v1/stories
+
+### get single story
+GET http://localhost:3000/api/v1/stories/66ff526b30e624acb4c8b3d0
+
+### update story
+PATCH http://localhost:3000/api/v1/stories/67000e060ffa2c24d0bec8fe
+Content-Type: application/json
+
+{
+    "title": "New Title",
+    "isFinish": "true"
+}
+
+### delete a story
+DELETE http://localhost:3000/api/v1/stories/66ff526b30e624acb4c8b3d0
+
+### get a random premise
+GET http://localhost:3000/api/v1/stories/premise
+
+### validate a premise
+POST http://localhost:3000/api/v1/stories/premise
+Content-Type: application/json
+
+{
+    "premise": "Robot town"
+}

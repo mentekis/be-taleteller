@@ -111,5 +111,7 @@ export async function generateStage(data: IStageArguments): Promise<IStage> {
    // const { optionA, optionB, ...stageData } = stage;
    // Stage.create(stageData);
 
+   // if
+
    return stage;
 }
