@@ -1,4 +1,6 @@
-// import { replicate } from "../utils/replicate";
+import { Upload } from "@aws-sdk/lib-storage";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { replicate } from "../utils/replicate";
 import { openai } from "../utils/openai";
 import * as stageRepository from "../repositories/stage.repository";
 import * as storyRepository from "../repositories/story.repository";
@@ -6,23 +8,27 @@ import * as storyService from "../services/story.service";
 import { IStage, IStageArguments, IStageShow } from "../types/stage";
 import { IStory } from "../types/story";
 import { getBgmTags, getBgmUrl } from "../utils/bgm";
+import { s3 } from "../utils/s3";
 
 // create stage in db
 export async function create(data: IStageArguments) {
    const stageData = await generateStage(data);
 
    // stageData contains data that need to be showed in user display
-   // use some of stageData propertiess to be saved in db asynchronously
+   // use some of stageData propertiess to be saved in db
    const { storyId, stageNumber, stageStory, place, bgm, isEnd } = stageData;
 
-   stageRepository.create({
+   const stage = (await stageRepository.create({
       storyId,
       stageNumber,
       stageStory,
       place,
       bgm,
       isEnd,
-   });
+   })) as IStage;
+
+   // move the image to s3
+   uploadImgS3andUpdateDb(stage);
 
    // return stageData to be served in user display
    return stageData;
@@ -41,22 +47,23 @@ export async function getByStoryId(storyId: string) {
 }
 
 // generate image using replicate api & flux-schnell model
-// async function generateImage(prompt: string) {
-//    const model = "black-forest-labs/flux-schnell";
+async function generateImage(prompt: string) {
+   const model = "black-forest-labs/flux-schnell";
 
-//    const input = {
-//       prompt: `Child storybook illustration of ${prompt}`,
-//       go_fast: true,
-//       num_outputs: 1,
-//       aspect_ratio: "16:9",
-//       output_format: "webp",
-//       output_quality: 80,
-//    };
+   const input = {
+      seed: 29733,
+      prompt: `Child storybook illustration of ${prompt}`,
+      go_fast: true,
+      num_outputs: 1,
+      aspect_ratio: "16:9",
+      output_format: "webp",
+      output_quality: 80,
+   };
 
-//    const response = (await replicate.run(model, { input })) as string[];
+   const response = (await replicate.run(model, { input })) as string[];
 
-//    return response[0];
-// }
+   return response[0];
+}
 
 // generate stage using openai and save it to db
 export async function generateStage(data: IStageArguments): Promise<IStageShow> {
@@ -152,12 +159,11 @@ export async function generateStage(data: IStageArguments): Promise<IStageShow> 
    stage.storyId = storyId;
    stage.isEnd = stage.stageNumber == maxStage;
    stage.bgm = getBgmUrl(stage.bgm) as string;
-   // stage.place = await generateImage(stage.place);
+   stage.place = await generateImage(stage.place);
 
    // update the story context
    storyRepository.update(storyId, { context: (context + stage.stageStory) as string });
 
-   // TODO:
    // When stage isEnd, update story isFinish to true
    // complete the story metadata
    // all are done synchronoushly
@@ -167,4 +173,42 @@ export async function generateStage(data: IStageArguments): Promise<IStageShow> 
    }
 
    return stage;
+}
+
+export async function uploadImgS3(imgUrl: string, key: string) {
+   const uploadImg = new Upload({
+      client: s3,
+      params: {
+         Bucket: process.env.S3_BUCKET as string,
+         Key: `img/${key}.webp`,
+         Body: (await fetch(imgUrl).then((res) => res.body)) as ReadableStream<Uint8Array>,
+      },
+   });
+
+   const result = await uploadImg.done();
+   return result;
+}
+
+export async function deleteImgS3(key: string) {
+   const result = await s3.send(new DeleteObjectCommand({ Bucket: process.env.S3_BUCKET as string, Key: key }));
+   return result;
+}
+
+async function uploadImgS3andUpdateDb(stage: IStage) {
+   try {
+      const { _id, storyId, stageNumber, place } = stage;
+      const result = await uploadImgS3(place, `${storyId}-${stageNumber}`);
+      update(_id as string, { place: result.Location });
+   } catch (error) {
+      if (error instanceof Error) {
+         console.log(error);
+      }
+   }
+}
+
+// delete a stage and its s3 img
+export async function deleteStage(stage: IStage) {
+   await deleteImgS3(`img/${stage.storyId}-${stage.stageNumber}.webp`);
+   const deletedStage = await stageRepository.deleteOne(stage._id as string);
+   return deletedStage;
 }

@@ -21,8 +21,9 @@ export async function getById(id: string) {
 }
 
 // delete a single story by storyId
-export function deleteById(id: string) {
-   return Story.findByIdAndDelete(id);
+export async function deleteById(id: string) {
+   const deletedData = await Story.findByIdAndDelete(id);
+   return deletedData;
 }
 
 // update a story

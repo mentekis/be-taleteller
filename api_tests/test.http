@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "userId": "67000e060ffa2c24d0bec8fe",
-    "premise": "A curious little girl decides to build a rocket out of recyclable materials to see how high her dreams can reach"
+    "premise": "Giant robot fight"
 }
 
 ### get list stories
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ### delete a story
-DELETE http://localhost:3000/api/v1/stories/66ff526b30e624acb4c8b3d0
+DELETE http://localhost:3000/api/v1/stories/6700f4b050e791e8abd89a53
 
 ### get a random premise
 GET http://localhost:3000/api/v1/stories/premise
@@ -33,7 +33,7 @@ POST http://localhost:3000/api/v1/stories/premise
 Content-Type: application/json
 
 {
-    "premise": "Robot town"
+    "premise": "dragon hunter"
 }
 
 ### create a new stage
@@ -41,13 +41,26 @@ POST http://localhost:3000/api/v1/stages
 Content-Type: application/json  
 
 {
-    "storyId":"6700f4b050e791e8abd89a53",
-    "stageNumber":"5",
-    "userChoice":"Ellie cunningly asks the vendor if she can have some foil sheets for free as part of her rocket project."
+    "storyId":"670162514b0a8ef884bd0b11",
+    "stageNumber":"3",
+    "userChoice":"Robo-Champ charges forward with a spectacular leap"
 }
 
 ### get stages by storyId
-GET http://localhost:3000/api/v1/stages/6700f4b050e791e8abd89a53
+GET http://localhost:3000/api/v1/stages/670162514b0a8ef884bd0b11
 
 ### test
 GET http://localhost:3000/test/6700f4b050e791e8abd89a53
+
+### test s3
+POST http://localhost:3000/tests3
+Content-Type: application/json
+
+{
+    "imgUrl": "https://replicate.delivery/yhqm/hcDDSNf633zeDUz9sWkKfaftcfJLWIvuhn9vfCFWmufxelmemA/out-0.webp",
+    "key":"hello"
+
+}
+
+### delete s3
+POST http://localhost:3000/deletes3/1728139273241.txt

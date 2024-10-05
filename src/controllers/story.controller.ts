@@ -120,13 +120,10 @@ export async function handleUpdateStory(req: Request, res: Response) {
 }
 export async function handleDeleteStory(req: Request, res: Response) {
    try {
-      const { deletedStory, deletedStages } = await storyService.deleteStoryAndStages(req.params.storyId);
+      const deletedStory = await storyService.deleteStoryAndStages(req.params.storyId);
       res.status(200).json({
          message: "story deleted",
-         data: {
-            deletedStory,
-            deletedStages,
-         },
+         deletedStory,
       });
    } catch (error) {
       if (error instanceof Error) {

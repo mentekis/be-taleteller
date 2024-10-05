@@ -3,6 +3,8 @@ import * as stageRepository from "../repositories/stage.repository";
 import * as likeRepository from "../repositories/like.repository";
 import { openai } from "../utils/openai";
 import { IStory } from "../types/story";
+import { IStage } from "../types/stage";
+import { deleteStage } from "./stage.service";
 
 // get all stories
 export async function get(filter: Partial<IStory>, start = 0, limit = 100, orderBy = "dsc") {
@@ -181,17 +183,20 @@ export async function completeStoryMetadata(storyId: string) {
 
    // TODO:
    // update the thumbnail
-   const lastStage = (await stageRepository.get({ storyId, stageNumber: 0 }))[0];
+   const firstStage = (await stageRepository.get({ storyId, stageNumber: 1 }))[0];
 
-   const storyUpdated = storyRepository.update(storyId, { title, description, thumbnail: lastStage.place as string });
+   const storyUpdated = storyRepository.update(storyId, { title, description, thumbnail: firstStage.place as string });
    return storyUpdated;
 }
 
 // delete a story and all its stages
 export async function deleteStoryAndStages(storyId: string) {
+   const stages = (await stageRepository.get({ storyId })) as IStage[];
+   for (const stage of stages) {
+      deleteStage(stage);
+   }
    const deletedStory = await storyRepository.deleteById(storyId);
-   const deletedStages = await stageRepository.deleteByStoryId({ storyId });
-   return { deletedStory, deletedStages };
+   return deletedStory;
 }
 
 // update a story

@@ -5,8 +5,8 @@ export interface IStageArguments {
 }
 
 export interface IStage {
-   _id?: string;
-   storyId: string;
+   _id?: string | ObjectId;
+   storyId: string | ObjectId;
    stageNumber: number;
    stageStory: string;
    place: string;

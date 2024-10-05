@@ -23,8 +23,14 @@ export async function deleteByStoryId(filter: Partial<IStage>) {
    return deletedData;
 }
 
+// delete a stage
+export async function deleteOne(_id: string) {
+   const deletedData = await Stage.findByIdAndDelete(_id);
+   return deletedData;
+}
+
 // update a stage
 export async function update(id: string, data: Partial<IStage>) {
-   const updatedStage = await Stage.findOneAndUpdate({ _id: id }, { data }, { new: true });
+   const updatedStage = await Stage.findOneAndUpdate({ _id: id }, data, { new: true });
    return updatedStage;
 }
