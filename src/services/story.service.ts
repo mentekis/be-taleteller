@@ -117,6 +117,7 @@ export function createNewStory(data: { userId: string; premise: string }) {
       description: premise + " [temporary]",
       thumbnail: "",
       premise,
+      context: "",
       isFinish: false,
       maxStage: MIN_STAGE_NUMBER + Math.floor(Math.random() * (MAX_STAGE_NUMBER - MIN_STAGE_NUMBER)),
    };
@@ -126,7 +127,10 @@ export function createNewStory(data: { userId: string; premise: string }) {
 }
 
 // complete a story metadata using AI (when a story is finished)
-export async function completeStoryMetadata(data: { storyId: string; storyContext: string }) {
+export async function completeStoryMetadata(storyId: string) {
+   const story = (await storyRepository.getById(storyId)) as IStory;
+   const { context } = story;
+
    const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -141,7 +145,7 @@ export async function completeStoryMetadata(data: { storyId: string; storyContex
          },
          {
             role: "user",
-            content: data.storyContext,
+            content: context,
          },
       ],
       temperature: 1,
@@ -175,14 +179,18 @@ export async function completeStoryMetadata(data: { storyId: string; storyContex
 
    const { title, description } = JSON.parse(response.choices[0].message?.content as string);
 
-   const storyUpdated = storyRepository.update(data.storyId, { title, description });
+   // TODO:
+   // update the thumbnail
+   const lastStage = (await stageRepository.get({ storyId, stageNumber: 0 }))[0];
+
+   const storyUpdated = storyRepository.update(storyId, { title, description, thumbnail: lastStage.place as string });
    return storyUpdated;
 }
 
 // delete a story and all its stages
 export async function deleteStoryAndStages(storyId: string) {
    const deletedStory = await storyRepository.deleteById(storyId);
-   const deletedStages = await stageRepository.deleteByStoryId(storyId);
+   const deletedStages = await stageRepository.deleteByStoryId({ storyId });
    return { deletedStory, deletedStages };
 }
 

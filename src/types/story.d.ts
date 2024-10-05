@@ -1,12 +1,13 @@
 export interface IStory {
-   _id?: string;
-   userId: string;
+   _id?: string | ObjectId;
+   userId: string | ObjectId;
    title: string | RegExp;
    description: string;
    premise: string;
    thumbnail: string;
    isFinish: boolean;
-   maxStage: number;
+   maxStage: NonNullable<number>;
+   context: string;
    createdAt?: Date;
    updatedAt?: Date;
 }

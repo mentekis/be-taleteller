@@ -1,8 +1,44 @@
 // import { replicate } from "../utils/replicate";
 import { openai } from "../utils/openai";
-import { IStage, IStageArguments } from "../types/stage";
-// import { Stage } from "../models/stage.model";
+import * as stageRepository from "../repositories/stage.repository";
+import * as storyRepository from "../repositories/story.repository";
+import * as storyService from "../services/story.service";
+import { IStage, IStageArguments, IStageShow } from "../types/stage";
+import { IStory } from "../types/story";
 import { getBgmTags, getBgmUrl } from "../utils/bgm";
+
+// create stage in db
+export async function create(data: IStageArguments) {
+   const stageData = await generateStage(data);
+
+   // stageData contains data that need to be showed in user display
+   // use some of stageData propertiess to be saved in db asynchronously
+   const { storyId, stageNumber, stageStory, place, bgm, isEnd } = stageData;
+
+   stageRepository.create({
+      storyId,
+      stageNumber,
+      stageStory,
+      place,
+      bgm,
+      isEnd,
+   });
+
+   // return stageData to be served in user display
+   return stageData;
+}
+
+// update stage
+export async function update(stageId: string, data: Partial<IStage>) {
+   const updatedStage = await stageRepository.update(stageId, data);
+   return updatedStage;
+}
+
+// get stages by storyId
+export async function getByStoryId(storyId: string) {
+   const stages = await stageRepository.get({ storyId });
+   return stages;
+}
 
 // generate image using replicate api & flux-schnell model
 // async function generateImage(prompt: string) {
@@ -23,16 +59,27 @@ import { getBgmTags, getBgmUrl } from "../utils/bgm";
 // }
 
 // generate stage using openai and save it to db
-export async function generateStage(data: IStageArguments): Promise<IStage> {
-   const { storyId, premise, currentStageNumber, currentStoryContext, userChoice, maxStage } = data;
+export async function generateStage(data: IStageArguments): Promise<IStageShow> {
+   const { stageNumber, userChoice, storyId } = data;
+   // get supporting data from story
+   const story = (await storyRepository.getById(data.storyId)) as unknown as IStory;
 
-   let userPrompt = `Current stage number = ${currentStageNumber};\nPrevious story context = ${currentStoryContext};\nUser choice = ${userChoice};\n`;
+   if (!story) throw new Error("story not found");
 
-   if (currentStageNumber == maxStage - 2) {
-      userPrompt = userPrompt + " CRITICAL: STAGE STORY AND OPTIONS MUST LEAD TO STORY CONCLUSION";
+   const { premise, maxStage, context } = story;
+
+   // throw error if stageNumber > maxStage
+   if (stageNumber > maxStage) throw new Error("invalid stage number");
+
+   let userPrompt = `Current stage number = ${
+      stageNumber - 1
+   };\nPrevious story context = ${context};\nUser choice = ${userChoice};\n`;
+
+   if (stageNumber == maxStage - 1) {
+      userPrompt = userPrompt + "CRITICAL: STAGE STORY AND OPTIONS MUST LEAD TO STORY CONCLUSION";
    }
 
-   if (currentStageNumber == maxStage - 1) {
+   if (stageNumber == maxStage) {
       userPrompt = userPrompt + "CRITICAL: CONCLUDE THE STORY. DON'T GIVE OPTIONS ANYMORE. TELL THE MORAL OF THE STORY";
    }
 
@@ -101,17 +148,23 @@ export async function generateStage(data: IStageArguments): Promise<IStage> {
       },
    });
 
-   const stage = JSON.parse(response.choices[0].message?.content as string) as IStage;
+   const stage = JSON.parse(response.choices[0].message?.content as string) as IStageShow;
    stage.storyId = storyId;
-   stage.storyContext = currentStoryContext + stage.stageStory;
    stage.isEnd = stage.stageNumber == maxStage;
    stage.bgm = getBgmUrl(stage.bgm) as string;
    // stage.place = await generateImage(stage.place);
 
-   // const { optionA, optionB, ...stageData } = stage;
-   // Stage.create(stageData);
+   // update the story context
+   storyRepository.update(storyId, { context: (context + stage.stageStory) as string });
 
-   // if
+   // TODO:
+   // When stage isEnd, update story isFinish to true
+   // complete the story metadata
+   // all are done synchronoushly
+   if (stage.isEnd) {
+      storyRepository.update(storyId, { isFinish: true });
+      storyService.completeStoryMetadata(storyId);
+   }
 
    return stage;
 }

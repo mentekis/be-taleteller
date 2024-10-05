@@ -15,8 +15,9 @@ export async function get(filter: Partial<IStory>, start: number, limit: number,
 }
 
 // get a single story by storyId
-export function getById(id: string) {
-   return Story.findById(id);
+export async function getById(id: string) {
+   const story = await Story.findById(id);
+   return story;
 }
 
 // delete a single story by storyId

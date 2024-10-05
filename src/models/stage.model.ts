@@ -1,10 +1,9 @@
 import { Schema, model } from "mongoose";
 
 const stageSchema = new Schema({
-   storyId: String,
+   storyId: { type: Schema.Types.ObjectId, ref: "Story" },
    stageNumber: Number,
    stageStory: String,
-   storyContext: String,
    place: String,
    bgm: String,
    isEnd: Boolean,

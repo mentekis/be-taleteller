@@ -1,13 +1,20 @@
 export interface IStageArguments {
    storyId: string;
-   premise: string;
-   currentStageNumber: number;
-   currentStoryContext: string;
+   stageNumber: number;
    userChoice: string;
-   maxStage: number;
 }
 
 export interface IStage {
+   _id?: string;
+   storyId: string;
+   stageNumber: number;
+   stageStory: string;
+   place: string;
+   bgm: string;
+   isEnd: boolean;
+}
+
+export interface IStageShow {
    storyId: string;
    stageNumber: number;
    stageStory: string;
@@ -15,6 +22,5 @@ export interface IStage {
    optionB: string;
    place: string;
    isEnd: boolean;
-   storyContext: string;
    bgm: string;
 }

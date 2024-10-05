@@ -3,15 +3,15 @@ POST http://localhost:3000/api/v1/stories
 Content-Type: application/json
 
 {
-    "userId": "000",
-    "premise": "story premise refined by AI"
+    "userId": "67000e060ffa2c24d0bec8fe",
+    "premise": "A curious little girl decides to build a rocket out of recyclable materials to see how high her dreams can reach"
 }
 
 ### get list stories
 GET http://localhost:3000/api/v1/stories
 
 ### get single story
-GET http://localhost:3000/api/v1/stories/66ff526b30e624acb4c8b3d0
+GET http://localhost:3000/api/v1/stories/6700f4b050e791e8abd89a53
 
 ### update story
 PATCH http://localhost:3000/api/v1/stories/67000e060ffa2c24d0bec8fe
@@ -35,3 +35,19 @@ Content-Type: application/json
 {
     "premise": "Robot town"
 }
+
+### create a new stage
+POST http://localhost:3000/api/v1/stages
+Content-Type: application/json  
+
+{
+    "storyId":"6700f4b050e791e8abd89a53",
+    "stageNumber":"5",
+    "userChoice":"Ellie cunningly asks the vendor if she can have some foil sheets for free as part of her rocket project."
+}
+
+### get stages by storyId
+GET http://localhost:3000/api/v1/stages/6700f4b050e791e8abd89a53
+
+### test
+GET http://localhost:3000/test/6700f4b050e791e8abd89a53

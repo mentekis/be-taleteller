@@ -12,14 +12,14 @@ export async function get(filter: Partial<IStage>) {
    return await Stage.find(filter);
 }
 
-// get a single stage by stageId
-export async function getById(id: string) {
-   return await Stage.findById(id);
+// get a single stage
+export async function getSingle(filter: Partial<IStage>) {
+   return await Stage.findOne(filter).populate("storyId");
 }
 
-// delete all stages by storyId
-export async function deleteByStoryId(storyId: string) {
-   const deletedData = await Stage.deleteMany({ storyId });
+// delete stages
+export async function deleteByStoryId(filter: Partial<IStage>) {
+   const deletedData = await Stage.deleteMany(filter);
    return deletedData;
 }
 
