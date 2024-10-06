@@ -5,7 +5,7 @@ import { openai } from "../utils/openai";
 import * as stageRepository from "../repositories/stage.repository";
 import * as storyRepository from "../repositories/story.repository";
 import * as storyService from "../services/story.service";
-import { IStage, IStageArguments, IStageShow } from "../types/stage";
+import { IStage, IStageArguments } from "../types/stage";
 import { IStory } from "../types/story";
 import { getBgmTags, getBgmUrl } from "../utils/bgm";
 import { s3 } from "../utils/s3";
@@ -14,18 +14,7 @@ import { s3 } from "../utils/s3";
 export async function create(data: IStageArguments) {
    const stageData = await generateStage(data);
 
-   // stageData contains data that need to be showed in user display
-   // use some of stageData propertiess to be saved in db
-   const { storyId, stageNumber, stageStory, place, bgm, isEnd } = stageData;
-
-   const stage = (await stageRepository.create({
-      storyId,
-      stageNumber,
-      stageStory,
-      place,
-      bgm,
-      isEnd,
-   })) as IStage;
+   const stage = await stageRepository.create(stageData);
 
    // move the image to s3
    uploadImgS3andUpdateDb(stage);
@@ -66,7 +55,7 @@ async function generateImage(prompt: string) {
 }
 
 // generate stage using openai and save it to db
-export async function generateStage(data: IStageArguments): Promise<IStageShow> {
+export async function generateStage(data: IStageArguments): Promise<IStage> {
    const { stageNumber, userChoice, storyId } = data;
    // get supporting data from story
    const story = (await storyRepository.getById(data.storyId)) as unknown as IStory;
@@ -155,7 +144,7 @@ export async function generateStage(data: IStageArguments): Promise<IStageShow> 
       },
    });
 
-   const stage = JSON.parse(response.choices[0].message?.content as string) as IStageShow;
+   const stage = JSON.parse(response.choices[0].message?.content as string) as IStage;
    stage.storyId = storyId;
    stage.isEnd = stage.stageNumber == maxStage;
    stage.bgm = getBgmUrl(stage.bgm) as string;

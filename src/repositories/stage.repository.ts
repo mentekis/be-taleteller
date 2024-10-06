@@ -2,14 +2,15 @@ import { Stage } from "../models/stage.model";
 import { IStage } from "../types/stage";
 
 // create stage
-export async function create(data: Omit<IStage, "optionA" | "optionB">) {
-   const newStage = new Stage(data);
-   return await newStage.save();
+export async function create(data: IStage) {
+   const newStage = await new Stage(data).save() as unknown as IStage ;
+   return newStage;
 }
 
 // get stages based on filter
 export async function get(filter: Partial<IStage>) {
-   return await Stage.find(filter);
+    const stages = await Stage.find(filter) as IStage[]
+    return stages
 }
 
 // get a single stage

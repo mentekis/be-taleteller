@@ -3,7 +3,6 @@ import * as stageRepository from "../repositories/stage.repository";
 import * as likeRepository from "../repositories/like.repository";
 import { openai } from "../utils/openai";
 import { IStory } from "../types/story";
-import { IStage } from "../types/stage";
 import { deleteStage } from "./stage.service";
 
 // get all stories
@@ -191,7 +190,7 @@ export async function completeStoryMetadata(storyId: string) {
 
 // delete a story and all its stages
 export async function deleteStoryAndStages(storyId: string) {
-   const stages = (await stageRepository.get({ storyId })) as IStage[];
+   const stages = await stageRepository.get({ storyId });
    for (const stage of stages) {
       deleteStage(stage);
    }
