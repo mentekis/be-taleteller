@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 export interface IStageArguments {
    storyId: string;
    stageNumber: number;
@@ -7,15 +9,6 @@ export interface IStageArguments {
 export interface IStage {
    _id?: string | ObjectId;
    storyId: string | ObjectId;
-   stageNumber: number;
-   stageStory: string;
-   place: string;
-   bgm: string;
-   isEnd: boolean;
-}
-
-export interface IStageShow {
-   storyId: string;
    stageNumber: number;
    stageStory: string;
    optionA: string;

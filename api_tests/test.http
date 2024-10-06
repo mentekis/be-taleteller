@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "userId": "67000e060ffa2c24d0bec8fe",
-    "premise": "Giant robot fight"
+    "premise": "A curious little turtle dreams of seeing the world and embarks on a journey across a vast meadow to find the biggest pond for adventure"
 }
 
 ### get list stories
@@ -41,13 +41,13 @@ POST http://localhost:3000/api/v1/stages
 Content-Type: application/json  
 
 {
-    "storyId":"670162514b0a8ef884bd0b11",
-    "stageNumber":"3",
-    "userChoice":"Robo-Champ charges forward with a spectacular leap"
+    "storyId":"67025bbcf1c3baea79462c7e",
+    "stageNumber":"2",
+    "userChoice":"Tully decides to venture directly through the meadow, feeling brave and excited for what lies ahead"
 }
 
 ### get stages by storyId
-GET http://localhost:3000/api/v1/stages/670162514b0a8ef884bd0b11
+GET http://localhost:3000/api/v1/stages/67025bbcf1c3baea79462c7e
 
 ### test
 GET http://localhost:3000/test/6700f4b050e791e8abd89a53
@@ -64,3 +64,14 @@ Content-Type: application/json
 
 ### delete s3
 POST http://localhost:3000/deletes3/1728139273241.txt
+
+### create user
+POST http://localhost:3000/createuser
+Content-Type: application/json
+
+{
+    "email": "a@mail",
+    "name": "Agusta",
+    "password": "rahasia123",
+    "passwordConfirmation": "rahasia123"
+}

@@ -4,10 +4,12 @@ dotenv.config();
 
 import { deleteImgS3, generateStage, uploadImgS3 } from "./services/stage.service";
 import { getRandomPremise, validatePremise, completeStoryMetadata } from "./services/story.service";
+import * as userService from "./services/user.service";
 
 import { connectDb } from "./utils/connectDb";
 import { storyRouter } from "./routes/story.route";
 import { stageRouter } from "./routes/stage.route";
+import { ZodError } from "zod";
 
 const app = express();
 
@@ -17,6 +19,27 @@ app.use(storyRouter);
 app.use(stageRouter);
 
 // testing purpose only--------
+app.post("/createuser", async (req, res) => {
+   try {
+      const newUser = await userService.create(req.body);
+      res.json(newUser);
+   } catch (error) {
+      if (error instanceof Error) {
+         if (error instanceof ZodError) {
+            res.json({
+               message: "validation error",
+               data: error.issues,
+            });
+         } else {
+            res.json({
+               message: "user creation failed",
+               data: error.message,
+            });
+         }
+      }
+   }
+});
+
 app.post("/tests3", async (req, res) => {
    const result = await uploadImgS3(req.body.imgUrl, req.body.key);
    res.json(result);

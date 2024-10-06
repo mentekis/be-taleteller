@@ -6,6 +6,8 @@ const stageSchema = new Schema({
    stageStory: String,
    place: String,
    bgm: String,
+   optionA:String,
+   optionB:String,
    isEnd: Boolean,
 });
 
