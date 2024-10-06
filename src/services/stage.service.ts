@@ -195,15 +195,9 @@ export async function deleteImgS3(key: string) {
 }
 
 async function uploadImgS3andUpdateDb(stage: IStage) {
-   try {
-      const { _id, storyId, stageNumber, place } = stage;
-      const result = await uploadImgS3(place, `${storyId}-${stageNumber}`);
-      update(_id as string, { place: result.Location });
-   } catch (error) {
-      if (error instanceof Error) {
-         console.log(error);
-      }
-   }
+   const { _id, storyId, stageNumber, place } = stage;
+   const result = await uploadImgS3(place, `${storyId}-${stageNumber}`);
+   update(_id as string, { place: result.Location });
 }
 
 // delete a stage and its s3 img
