@@ -9,6 +9,8 @@ const stageSchema = new Schema({
    optionA:String,
    optionB:String,
    isEnd: Boolean,
+   optionA: String,
+   optionB: String,
 });
 
 export const Stage = model("Stage", stageSchema);
