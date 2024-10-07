@@ -2,6 +2,7 @@ import * as storyRepository from "../repositories/story.repository";
 import * as stageRepository from "../repositories/stage.repository";
 import * as likeRepository from "../repositories/like.repository";
 import { openai } from "../utils/openai";
+import { generateTitleDescription } from "../utils/generateTitleDescription";
 import { IStory } from "../types/story";
 import { IStage } from "../types/stage";
 import { deleteStage } from "./stage.service";
@@ -108,15 +109,17 @@ export async function validatePremise(premise: string) {
 }
 
 // create a new story only by premise, all other data is marked temporary or ongoing
-export function createNewStory(data: { userId: string; premise: string }) {
+export async function createNewStory(data: { userId: string; premise: string }) {
    const { userId, premise } = data;
    const MIN_STAGE_NUMBER = 4;
    const MAX_STAGE_NUMBER = 7;
 
+   const {title, description} = await generateTitleDescription(premise);
+
    const storyData = {
       userId,
-      title: "Ongoing Story ...",
-      description: premise + " [temporary]",
+      title: `${title} [temporary]`,
+      description: `${description} [temporary]`,
       thumbnail: "",
       premise,
       context: "",
@@ -133,55 +136,8 @@ export async function completeStoryMetadata(storyId: string) {
    const story = (await storyRepository.getById(storyId)) as IStory;
    const { context } = story;
 
-   const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-         {
-            role: "system",
-            content: [
-               {
-                  type: "text",
-                  text: "Given a kids story, create a suitable title and description for the story. Description is 2 sentences or less. Do not sound like a commercial. Do not try to convice reader to read the story.",
-               },
-            ],
-         },
-         {
-            role: "user",
-            content: context,
-         },
-      ],
-      temperature: 1,
-      max_tokens: 2048,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-      response_format: {
-         type: "json_schema",
-         json_schema: {
-            name: "json_schema",
-            strict: true,
-            schema: {
-               type: "object",
-               properties: {
-                  title: {
-                     type: "string",
-                     description: "The title of the story object.",
-                  },
-                  description: {
-                     type: "string",
-                     description: "A description of the story.",
-                  },
-               },
-               required: ["title", "description"],
-               additionalProperties: false,
-            },
-         },
-      },
-   });
+   const { title, description } = await generateTitleDescription(context);
 
-   const { title, description } = JSON.parse(response.choices[0].message?.content as string);
-
-   // TODO:
    // update the thumbnail
    const firstStage = (await stageRepository.get({ storyId, stageNumber: 1 }))[0];
 

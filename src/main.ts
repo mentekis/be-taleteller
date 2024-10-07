@@ -19,6 +19,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(authRouter);
+
+app.use(authMiddleware)
+
 app.use(storyRouter);
 app.use(stageRouter);
 

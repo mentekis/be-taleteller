@@ -3,8 +3,7 @@ POST http://localhost:3000/api/v1/stories
 Content-Type: application/json
 
 {
-    "userId": "67000e060ffa2c24d0bec8fe",
-    "premise": "A curious little turtle dreams of seeing the world and embarks on a journey across a vast meadow to find the biggest pond for adventure"
+    "premise": "A young girl on a remote farm discovers she can communicate with the old, wise barn owl who shares stories of the history of her family's land."
 }
 
 ### get list stories
@@ -41,13 +40,13 @@ POST http://localhost:3000/api/v1/stages
 Content-Type: application/json  
 
 {
-    "storyId":"67025bbcf1c3baea79462c7e",
+    "storyId":"67033f24b38d465082f5373b",
     "stageNumber":"2",
-    "userChoice":"Tully decides to venture directly through the meadow, feeling brave and excited for what lies ahead"
+    "userChoice":"The young girl decides to step outside and look for the wise barn owl"
 }
 
 ### get stages by storyId
-GET http://localhost:3000/api/v1/stages/67025bbcf1c3baea79462c7e
+GET http://localhost:3000/api/v1/stages/67033f24b38d465082f5373b
 
 ### test
 GET http://localhost:3000/test/6700f4b050e791e8abd89a53
