@@ -6,11 +6,9 @@ const stageSchema = new Schema({
    stageStory: String,
    place: String,
    bgm: String,
-   optionA:String,
-   optionB:String,
-   isEnd: Boolean,
    optionA: String,
    optionB: String,
+   isEnd: Boolean,
 });
 
 export const Stage = model("Stage", stageSchema);
