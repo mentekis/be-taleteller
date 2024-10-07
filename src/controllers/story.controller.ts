@@ -22,7 +22,7 @@ export async function handleCreateStory(req: Request, res: Response) {
 }
 
 export async function handleGetStories(req: Request, res: Response) {
-   const { start, limit, search, userId, orderBy } = req.query;
+   const { start, limit, search, userId, orderBy, isFinish } = req.query;
 
    const startIndex = Number(start) || 0;
    const limitIndex = Number(limit) || 100;
@@ -35,6 +35,10 @@ export async function handleGetStories(req: Request, res: Response) {
 
    if (userId) {
       filter.userId = userId as string;
+   }
+
+   if (isFinish) {
+      filter.isFinish = isFinish as unknown as boolean;
    }
 
    const { stories, total } = await storyService.get(filter, startIndex, limitIndex, orderBy as string);
