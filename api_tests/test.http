@@ -51,4 +51,7 @@ Content-Type: application/json
 }
 
 ### get list of stage by storyId
-GET http://localhost:3000/api/v1/stages/67035d9e10af2bdf46595201
+GET http://localhost:3000/api/v1/stages/
+
+### get stories
+GET http://localhost:3000/api/v1/stories

@@ -1,0 +1,22 @@
+version: "3.3"
+
+services:
+   backend:
+      build: .
+      ports:
+         - "3000:3000"
+      depends_on:
+         - mongodb
+
+   mongodb:
+      image: mongo
+      ports:
+         - "27017:27017"
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=taleteller_db
+         - MONGO_INITDB_ROOT_PASSWORD=taleteller_db_password
+      volumes:
+         - mongodb_data:/data/db
+
+volumes:
+   mongodb_data:
