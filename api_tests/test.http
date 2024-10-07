@@ -1,76 +1,54 @@
-### create a new story
-POST http://localhost:3000/api/v1/stories
+### logout
+POST http://localhost:3000/api/v1/auth/logout
+
+### register
+POST http://localhost:3000/api/v1/auth/register
 Content-Type: application/json
 
 {
-    "premise": "A young girl on a remote farm discovers she can communicate with the old, wise barn owl who shares stories of the history of her family's land."
+    "name":"wahyu",
+    "email": "w@mail.com",
+    "password": "rahasia123",
+    "passwordConfirmation": "rahasia123"
 }
 
-### get list stories
-GET http://localhost:3000/api/v1/stories
-
-### get single story
-GET http://localhost:3000/api/v1/stories/6700f4b050e791e8abd89a53
-
-### update story
-PATCH http://localhost:3000/api/v1/stories/67000e060ffa2c24d0bec8fe
+### login
+POST http://localhost:3000/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "title": "New Title",
-    "isFinish": "true"
+    "email": "w@mail.com",
+    "password": "rahasia123"
 }
 
-### delete a story
-DELETE http://localhost:3000/api/v1/stories/6700f4b050e791e8abd89a53
-
-### get a random premise
+### generate random premise
 GET http://localhost:3000/api/v1/stories/premise
 
-### validate a premise
+### validate premise
 POST http://localhost:3000/api/v1/stories/premise
 Content-Type: application/json
 
 {
-    "premise": "dragon hunter"
+    "premise": "a fisherman in the midle of an ocean storm"
 }
 
-### create a new stage
+### create story
+POST http://localhost:3000/api/v1/stories
+Content-Type: application/json
+
+{
+    "premise": "A brave young girl finds a mysterious message in a bottle while exploring a calm beach"
+}
+
+### create a stage
 POST http://localhost:3000/api/v1/stages
-Content-Type: application/json  
-
-{
-    "storyId":"67033f24b38d465082f5373b",
-    "stageNumber":"2",
-    "userChoice":"The young girl decides to step outside and look for the wise barn owl"
-}
-
-### get stages by storyId
-GET http://localhost:3000/api/v1/stages/67033f24b38d465082f5373b
-
-### test
-GET http://localhost:3000/test/6700f4b050e791e8abd89a53
-
-### test s3
-POST http://localhost:3000/tests3
 Content-Type: application/json
 
 {
-    "imgUrl": "https://replicate.delivery/yhqm/hcDDSNf633zeDUz9sWkKfaftcfJLWIvuhn9vfCFWmufxelmemA/out-0.webp",
-    "key":"hello"
-
+    "storyId": "67035d9e10af2bdf46595201",
+    "stageNumber": 1,
+    "userChoice": ""
 }
 
-### delete s3
-POST http://localhost:3000/deletes3/1728139273241.txt
-
-### create user
-POST http://localhost:3000/createuser
-Content-Type: application/json
-
-{
-    "email": "a@mail",
-    "name": "Agusta",
-    "password": "rahasia123",
-    "passwordConfirmation": "rahasia123"
-}
+### get list of stage by storyId
+GET http://localhost:3000/api/v1/stages/67035d9e10af2bdf46595201
