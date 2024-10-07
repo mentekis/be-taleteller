@@ -55,3 +55,6 @@ GET http://localhost:3000/api/v1/stages/
 
 ### get stories
 GET http://localhost:3000/api/v1/stories
+
+### authorize
+POST http://localhost:3000/api/v1/auth
