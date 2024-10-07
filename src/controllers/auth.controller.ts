@@ -6,18 +6,18 @@ export async function handleRegister(req: Request, res: Response) {
    try {
       const user = await authService.register(req.body);
       res.status(201).json({
-         message: "registered successfully",
+         message: "user created",
          data: user,
       });
    } catch (error) {
       if (error instanceof ZodError) {
          res.status(400).json({
-            message: "registration failed",
-            data: error.issues[0].message,
+            message: "user creation failed",
+            data: error.issues[0].path + " " + error.issues[0].message,
          });
       } else if (error instanceof Error) {
          res.status(400).json({
-            message: "registration failed",
+            message: "user creation failed",
             data: error.message,
          });
       }
