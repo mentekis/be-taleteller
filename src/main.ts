@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
+import cookieParser from "cookie-parser";
 import { deleteImgS3, generateStage, uploadImgS3 } from "./services/stage.service";
 import { getRandomPremise, validatePremise, completeStoryMetadata } from "./services/story.service";
 import * as userService from "./services/user.service";
@@ -9,35 +10,30 @@ import * as userService from "./services/user.service";
 import { connectDb } from "./utils/connectDb";
 import { storyRouter } from "./routes/story.route";
 import { stageRouter } from "./routes/stage.route";
-import { ZodError } from "zod";
+import { authRouter } from "./routes/auth.route";
+import { authMiddleware } from "./middleware/auth.middleware";
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
+app.use(authRouter);
 app.use(storyRouter);
 app.use(stageRouter);
 
 // testing purpose only--------
-app.post("/createuser", async (req, res) => {
-   try {
-      const newUser = await userService.create(req.body);
-      res.json(newUser);
-   } catch (error) {
-      if (error instanceof Error) {
-         if (error instanceof ZodError) {
-            res.json({
-               message: "validation error",
-               data: error.issues,
-            });
-         } else {
-            res.json({
-               message: "user creation failed",
-               data: error.message,
-            });
-         }
-      }
-   }
+app.get("/protected", authMiddleware, (req, res) => {
+   res.send("protected");
+});
+
+app.get("/cookies", (req, res) => {
+   res.json(req.cookies);
+});
+
+app.get("/users", async (req, res) => {
+   const users = await userService.getUsers();
+   res.cookie("test", "test").json(users);
 });
 
 app.post("/tests3", async (req, res) => {
