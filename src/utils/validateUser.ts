@@ -11,7 +11,7 @@ const userSchema = z.object({
 export function validateUser(data: IUser) {
    const validatedUser = userSchema.safeParse(data);
    if (!validatedUser.success) {
-      throw new Error(validatedUser.error.issues[0].message);
+      throw new Error(`${validatedUser.error.issues[0].path}: ${validatedUser.error.issues[0].message}`);
    }
-   return data;
+   return;
 }

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as authService from "../services/auth.service";
-import { ZodError } from "zod";
 
 export async function handleRegister(req: Request, res: Response) {
    try {
@@ -10,12 +9,7 @@ export async function handleRegister(req: Request, res: Response) {
          data: user,
       });
    } catch (error) {
-      if (error instanceof ZodError) {
-         res.status(400).json({
-            message: "user creation failed",
-            data: error.issues[0].path + " " + error.issues[0].message,
-         });
-      } else if (error instanceof Error) {
+      if (error instanceof Error) {
          res.status(400).json({
             message: "user creation failed",
             data: error.message,

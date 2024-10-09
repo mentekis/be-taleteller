@@ -6,7 +6,6 @@ POST http://localhost:3000/api/v1/auth/register
 Content-Type: application/json
 
 {
-    "name":"wahyu",
     "email": "w@mail.com",
     "password": "rahasia123",
     "passwordConfirmation": "rahasia123"
