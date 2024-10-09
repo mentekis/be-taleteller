@@ -1,5 +1,5 @@
 ### logout
-POST http://localhost:3000/api/v1/auth/logout
+POST http://103.226.139.53:3000/api/v1/auth/logout
 
 ### register
 POST http://localhost:3000/api/v1/auth/register
