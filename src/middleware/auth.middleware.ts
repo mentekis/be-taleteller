@@ -15,6 +15,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       const domain = domainMatch[1];
 
       if (authData.accessToken) {
+         res.locals.accessToken = authData.accessToken;
          res.cookie("accessToken", authData.accessToken, {
             maxAge: 999999999999,
             domain,

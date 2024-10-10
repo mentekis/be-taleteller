@@ -25,13 +25,12 @@ export async function handleLogin(req: Request, res: Response) {
 
       const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
       const domainMatch = domainRegex.exec(req.headers.origin as string);
-      
+
       if (!domainMatch) {
          throw new Error("Invalid origin header");
       }
 
       const domain = domainMatch[1];
-
 
       res.status(200)
          .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain, sameSite: "lax" })
@@ -44,6 +43,8 @@ export async function handleLogin(req: Request, res: Response) {
          .json({
             message: "user logged in",
             data: data.user,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
          });
    } catch (error) {
       if (error instanceof Error) {
