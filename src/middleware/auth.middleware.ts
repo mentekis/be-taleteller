@@ -8,8 +8,6 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       if (authData.accessToken) {
          res.locals.accessToken = authData.accessToken;
       }
-
-      res.locals.userId = authData.userId;
       next();
    } catch (error) {
       if (error instanceof Error) {
