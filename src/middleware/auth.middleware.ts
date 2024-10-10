@@ -6,7 +6,13 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       const authData = await authService.authorize(req.cookies);
 
       if (authData.accessToken) {
-         res.cookie("accessToken", authData.accessToken);
+         const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
+         const domain = domainRegex.exec(req.headers.origin as string)?.[1];
+
+         res.cookie("accessToken", authData.accessToken, {
+            maxAge: 999999999999,
+            domain,
+         });
       }
 
       res.locals.userId = authData.userId;

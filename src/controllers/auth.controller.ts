@@ -22,8 +22,8 @@ export async function handleLogin(req: Request, res: Response) {
    try {
       const { email, password } = req.body;
       const data = await authService.login({ email, password });
-      const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
 
+      const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
       const domain = domainRegex.exec(req.headers.origin as string)?.[1];
       res.status(200)
          .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain })
