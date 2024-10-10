@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -18,7 +18,14 @@ app.use(cookieParser());
 app.use(
    cors({
       credentials: true,
-      origin: "*",
+      origin: (requestOrigin, callback) => {
+         if (requestOrigin) {
+            callback(null, requestOrigin);
+         } else {
+            callback(null, "*");
+         }
+      },
+      methods: "*",
    }),
 );
 
