@@ -13,5 +13,5 @@ export function validateUser(data: IUser) {
    if (!validatedUser.success) {
       throw new Error(`${validatedUser.error.issues[0].path}: ${validatedUser.error.issues[0].message}`);
    }
-   return;
+   return validatedUser.data;
 }
