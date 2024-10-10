@@ -5,22 +5,8 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
    try {
       const authData = await authService.authorize(req.cookies);
 
-      const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
-      const domainMatch = domainRegex.exec(req.headers.origin as string);
-
-      if (!domainMatch) {
-         throw new Error("Invalid origin header");
-      }
-
-      const domain = domainMatch[1];
-
       if (authData.accessToken) {
          res.locals.accessToken = authData.accessToken;
-         res.cookie("accessToken", authData.accessToken, {
-            maxAge: 999999999999,
-            domain,
-            sameSite: "lax",
-         });
       }
 
       res.locals.userId = authData.userId;

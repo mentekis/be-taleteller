@@ -10,6 +10,7 @@ export async function handleCreateStory(req: Request, res: Response) {
       res.status(201).json({
          message: "new story created",
          data: newStory,
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
@@ -49,6 +50,7 @@ export async function handleGetStories(req: Request, res: Response) {
          limit: limitIndex,
          total,
       },
+      accessToken: res.locals.accessToken,
    });
 }
 
@@ -88,6 +90,7 @@ export async function handleGetLikedStories(req: Request, res: Response) {
             limit: limitIndex,
             total: totalLikedStories,
          },
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
@@ -113,6 +116,7 @@ export async function handleUpdateStory(req: Request, res: Response) {
       res.status(201).json({
          message: "story updated",
          data: updatedStory,
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
@@ -129,6 +133,7 @@ export async function handleDeleteStory(req: Request, res: Response) {
       res.status(200).json({
          message: "story deleted",
          deletedStory,
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
@@ -143,7 +148,7 @@ export async function handleDeleteStory(req: Request, res: Response) {
 export async function handleGetRandomPremise(req: Request, res: Response) {
    try {
       const premise = await storyService.getRandomPremise();
-      res.status(200).json({ premise });
+      res.status(200).json({ premise, accessToken: res.locals.accessToken });
    } catch (error) {
       if (error instanceof Error) {
          res.status(400).json({
@@ -158,7 +163,7 @@ export async function handleValidatePremise(req: Request, res: Response) {
    try {
       const { isValid, suggestedPremise } = await storyService.validatePremise(req.body.premise);
 
-      res.status(200).json({ isValid, suggestedPremise });
+      res.status(200).json({ isValid, suggestedPremise, accessToken: res.locals.accessToken });
    } catch (error) {
       if (error instanceof Error) {
          res.status(400).json({

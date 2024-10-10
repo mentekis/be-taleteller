@@ -23,29 +23,12 @@ export async function handleLogin(req: Request, res: Response) {
       const { email, password } = req.body;
       const data = await authService.login({ email, password });
 
-      const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
-      const domainMatch = domainRegex.exec(req.headers.origin as string);
-
-      if (!domainMatch) {
-         throw new Error("Invalid origin header");
-      }
-
-      const domain = domainMatch[1];
-
-      res.status(200)
-         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain, sameSite: "lax" })
-         .cookie("refreshToken", data.refreshToken, {
-            httpOnly: true,
-            maxAge: 999999999999,
-            domain,
-            sameSite: "lax",
-         })
-         .json({
-            message: "user logged in",
-            data: data.user,
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-         });
+      res.status(200).json({
+         message: "user logged in",
+         data: data.user,
+         accessToken: data.accessToken,
+         refreshToken: data.refreshToken,
+      });
    } catch (error) {
       if (error instanceof Error) {
          res.status(400).json({
@@ -60,7 +43,7 @@ export async function handleLogout(req: Request, res: Response) {
    try {
       const { refreshToken } = req.cookies;
       await authService.logout(refreshToken);
-      res.status(200).clearCookie("accessToken").clearCookie("refreshToken").json({
+      res.status(200).json({
          message: "logout successful",
       });
    } catch (error) {

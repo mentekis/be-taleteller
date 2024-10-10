@@ -7,6 +7,7 @@ export async function handleCreateStage(req: Request, res: Response) {
       res.status(201).json({
          message: "stage created",
          data: newStage,
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
@@ -25,6 +26,7 @@ export async function handleGetStagesByStoryId(req: Request, res: Response) {
       res.status(200).json({
          message: `stages of storyId: ${storyId} `,
          data: stages,
+         accessToken: res.locals.accessToken,
       });
    } catch (error) {
       if (error instanceof Error) {
