@@ -22,9 +22,16 @@ export async function handleLogin(req: Request, res: Response) {
    try {
       const { email, password } = req.body;
       const data = await authService.login({ email, password });
+      const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
+
+      const domain = domainRegex.exec(req.headers.origin as string)?.[1];
       res.status(200)
-         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain: req.headers.host })
-         .cookie("refreshToken", data.refreshToken, { httpOnly: true, maxAge: 999999999999, domain: req.headers.host })
+         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain })
+         .cookie("refreshToken", data.refreshToken, {
+            httpOnly: true,
+            maxAge: 999999999999,
+            domain,
+         })
          .json({
             message: "user logged in",
             data: data.user,
