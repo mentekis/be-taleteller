@@ -35,7 +35,8 @@ Content-Type: application/json
 POST http://localhost:3000/api/v1/stories
 Content-Type: application/json
 
-{
+{   
+    "userId": "670741c4628884f285f02320",
     "premise": "A brave young girl finds a mysterious message in a bottle while exploring a calm beach"
 }
 

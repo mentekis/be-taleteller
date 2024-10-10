@@ -4,8 +4,8 @@ import { IStory } from "../types/story";
 
 export async function handleCreateStory(req: Request, res: Response) {
    try {
-      const { premise } = req.body;
-      const { userId } = res.locals;
+      const { premise, userId } = req.body;
+      // const { userId } = res.locals;
       const newStory = await storyService.createNewStory({ userId, premise });
       res.status(201).json({
          message: "new story created",
