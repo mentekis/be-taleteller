@@ -24,13 +24,22 @@ export async function handleLogin(req: Request, res: Response) {
       const data = await authService.login({ email, password });
 
       const domainRegex = /^(?:https?:\/\/)?([^/]+?)(?::\d+)?$/;
-      const domain = domainRegex.exec(req.headers.origin as string)?.[1];
+      const domainMatch = domainRegex.exec(req.headers.origin as string);
+      
+      if (!domainMatch) {
+         throw new Error("Invalid origin header");
+      }
+
+      const domain = domainMatch[1];
+
+
       res.status(200)
-         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain })
+         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain, sameSite: "lax" })
          .cookie("refreshToken", data.refreshToken, {
             httpOnly: true,
             maxAge: 999999999999,
             domain,
+            sameSite: "lax",
          })
          .json({
             message: "user logged in",
