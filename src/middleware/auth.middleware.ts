@@ -13,6 +13,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       if (error instanceof Error) {
          res.status(401).json({
             message: "unauthorized",
+            data: error.message,
          });
       }
    }
