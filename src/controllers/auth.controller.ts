@@ -23,8 +23,8 @@ export async function handleLogin(req: Request, res: Response) {
       const { email, password } = req.body;
       const data = await authService.login({ email, password });
       res.status(200)
-         .cookie("accessToken", data.accessToken, { maxAge: 999999999999 })
-         .cookie("refreshToken", data.refreshToken, { httpOnly: true, maxAge: 999999999999 })
+         .cookie("accessToken", data.accessToken, { maxAge: 999999999999, domain: req.headers.host })
+         .cookie("refreshToken", data.refreshToken, { httpOnly: true, maxAge: 999999999999, domain: req.headers.host })
          .json({
             message: "user logged in",
             data: data.user,
