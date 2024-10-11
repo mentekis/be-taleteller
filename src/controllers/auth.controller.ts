@@ -70,9 +70,10 @@ export async function handleGetUser(req: Request, res: Response) {
       const user = await userService.getById(userId);
 
       if (user) {
+         delete user.password;
          res.status(200).json({
             message: "user found",
-            data: user,
+            data: { _id: user._id, name: user.name, email: user.email },
          });
       } else {
          res.status(404).json({
