@@ -46,8 +46,8 @@ Content-Type: application/json
 
 {
     "storyId": "67035d9e10af2bdf46595201",
-    "stageNumber": 1,
-    "userChoice": ""
+    "stageNumber": 2,
+    "userChoice": "blblabla"
 }
 
 ### get list of stage by storyId
