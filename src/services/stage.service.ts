@@ -187,6 +187,9 @@ async function uploadImgS3andUpdateDb(stage: IStage) {
    const { _id, storyId, stageNumber, place } = stage;
    const result = await uploadImgS3(place, `${storyId}-${stageNumber}`);
    update(_id as string, { place: result.Location });
+   if (stageNumber == 1) {
+      storyService.update(storyId as string, { thumbnail: result.Location });
+   }
 }
 
 // delete a stage and its s3 img

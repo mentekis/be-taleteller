@@ -114,7 +114,7 @@ export async function createNewStory(data: { userId: string; premise: string }) 
    const MIN_STAGE_NUMBER = 4;
    const MAX_STAGE_NUMBER = 7;
 
-   const {title, description} = await generateTitleDescription(premise);
+   const { title, description } = await generateTitleDescription(premise);
 
    const storyData = {
       userId,
@@ -138,10 +138,7 @@ export async function completeStoryMetadata(storyId: string) {
 
    const { title, description } = await generateTitleDescription(context);
 
-   // update the thumbnail
-   const firstStage = (await stageRepository.get({ storyId, stageNumber: 1 }))[0];
-
-   const storyUpdated = storyRepository.update(storyId, { title, description, thumbnail: firstStage.place as string });
+   const storyUpdated = storyRepository.update(storyId, { title, description });
    return storyUpdated;
 }
 

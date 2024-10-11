@@ -2,17 +2,18 @@
 POST http://103.226.139.53:3000/api/v1/auth/logout
 
 ### register
-POST http://localhost:3000/api/v1/auth/register
+POST http://103.226.139.53:3000/api/v1/auth/register
 Content-Type: application/json
 
 {
     "email": "w@mail.com",
     "password": "rahasia123",
-    "passwordConfirmation": "rahasia123"
+    "passwordConfirmation": "rahasia123",
+    "name": "wstypr"
 }
 
 ### login
-POST http://localhost:3000/api/v1/auth/login
+POST http://103.226.139.53:3000/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -21,10 +22,10 @@ Content-Type: application/json
 }
 
 ### generate random premise
-GET http://localhost:3000/api/v1/stories/premise
+GET http://103.226.139.53:3000/api/v1/stories/premise
 
 ### validate premise
-POST http://localhost:3000/api/v1/stories/premise
+POST http://103.226.139.53:3000/api/v1/stories/premise
 Content-Type: application/json
 
 {
@@ -32,29 +33,29 @@ Content-Type: application/json
 }
 
 ### create story
-POST http://localhost:3000/api/v1/stories
+POST http://103.226.139.53:3000/api/v1/stories
 Content-Type: application/json
 
 {   
     "userId": "670741c4628884f285f02320",
-    "premise": "A brave young girl finds a mysterious message in a bottle while exploring a calm beach"
+    "premise": "a fisherman in the midle of an ocean storm"
 }
 
 ### create a stage
-POST http://localhost:3000/api/v1/stages
+POST http://103.226.139.53:3000/api/v1/stages
 Content-Type: application/json
 
 {
-    "storyId": "67035d9e10af2bdf46595201",
-    "stageNumber": 2,
-    "userChoice": "blblabla"
+    "storyId": "Stick to his current course, pushing forward through the chaos with all his might",
+    "stageNumber": 6,
+    "userChoice": "Stick to his current course, pushing forward through the chaos with all his might."
 }
 
 ### get list of stage by storyId
-GET http://localhost:3000/api/v1/stages/
+GET http://103.226.139.53:3000/api/v1/stages/6707fc0097e1bd31b1125371
 
 ### get stories
-GET http://localhost:3000/api/v1/stories
+GET http://103.226.139.53:3000/api/v1/stories?userId=670741c4628884f285f02320
 
 ### authorize
 POST http://localhost:3000/api/v1/auth
