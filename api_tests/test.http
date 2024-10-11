@@ -37,7 +37,7 @@ POST http://103.226.139.53:3000/api/v1/stories
 Content-Type: application/json
 
 {   
-    "userId": "670741c4628884f285f02320",
+    "userId": "67094a0bb5bc74471a174a58",
     "premise": "a fisherman in the midle of an ocean storm"
 }
 
@@ -55,10 +55,10 @@ Content-Type: application/json
 GET http://103.226.139.53:3000/api/v1/stages/6707fc0097e1bd31b1125371
 
 ### get stories
-GET http://103.226.139.53:3000/api/v1/stories?userId=670741c4628884f285f02320
+GET http://localhost:3000/api/v1/stories/6709558c466fd4a701f72612
 
 ### authorize
 POST http://localhost:3000/api/v1/auth
 
 ### get a user
-GET http://localhost:3000/api/v1/user/67094a0bb5bc74471a174a58
+GET http://localhost:3000/api/v1/user/6709558c466fd4a701f72612

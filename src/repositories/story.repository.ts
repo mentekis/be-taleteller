@@ -10,13 +10,17 @@ export function create(data: IStory) {
 // get list of stories based on filter
 export async function get(filter: Partial<IStory>, start: number, limit: number, orderBy: string) {
    const order = orderBy === "dsc" ? -1 : 1;
-   const stories = await Story.find(filter).skip(start).limit(limit).sort({ updatedAt: order });
+   const stories = await Story.find(filter)
+      .skip(start)
+      .limit(limit)
+      .sort({ updatedAt: order })
+      .populate({ path: "userId", model: "User", select: "name" });
    return stories;
 }
 
 // get a single story by storyId
 export async function getById(id: string) {
-   const story = await Story.findById(id);
+   const story = await Story.findById(id).populate({ path: "userId", model: "User", select: "name" });
    return story;
 }
 
