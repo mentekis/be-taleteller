@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as authService from "../services/auth.service";
+import * as userService from "../services/user.service";
 
 export async function handleRegister(req: Request, res: Response) {
    try {
@@ -61,4 +62,29 @@ export async function handleAuthorize(req: Request, res: Response) {
       message: "authorized",
       accessToken: res.locals.accessToken,
    });
+}
+
+export async function handleGetUser(req: Request, res: Response) {
+   try {
+      const userId = req.params.userId;
+      const user = await userService.getById(userId);
+
+      if (user) {
+         res.status(200).json({
+            message: "user found",
+            data: user,
+         });
+      } else {
+         res.status(404).json({
+            message: "user not found",
+         });
+      }
+   } catch (error) {
+      if (error instanceof Error) {
+         res.status(404).json({
+            message: "user not found",
+            data: { ...error },
+         });
+      }
+   }
 }
