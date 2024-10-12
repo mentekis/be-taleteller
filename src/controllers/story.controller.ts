@@ -42,16 +42,25 @@ export async function handleGetStories(req: Request, res: Response) {
       filter.isFinish = isFinish as unknown as boolean;
    }
 
-   const { stories, total } = await storyService.get(filter, startIndex, limitIndex, orderBy as string);
-   res.status(200).json({
-      message: "the list of stories",
-      data: stories,
-      meta: {
-         limit: limitIndex,
-         total,
-      },
-      accessToken: res.locals.accessToken,
-   });
+   try {
+      const { stories, total } = await storyService.get(filter, startIndex, limitIndex, orderBy as string);
+      res.status(200).json({
+         message: "the list of stories",
+         data: stories,
+         meta: {
+            limit: limitIndex,
+            total,
+         },
+         accessToken: res.locals.accessToken,
+      });
+   } catch (error) {
+      if (error instanceof Error) {
+         res.status(400).json({
+            message: "get stories failed",
+            data: error.message,
+         });
+      }
+   }
 }
 
 export async function handleGetSingleStory(req: Request, res: Response) {

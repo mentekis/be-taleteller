@@ -1,10 +1,10 @@
 import { Schema, model } from "mongoose";
 
 const storySchema = new Schema({
-   userId: { type: Schema.Types.ObjectId, ref: "User" },
+   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
    title: String,
    description: String,
-   premise: String,
+   premise: { type: String, required: true },
    thumbnail: String,
    isFinish: Boolean,
    maxStage: Number,
